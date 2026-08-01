@@ -1,0 +1,23 @@
+[IELTS_LESSON]
+=== DIU IELTS PREPARATION MODULE ===
+Reading: Focus on skimming topic sentences in academic passages to improve time management.
+Writing: Structure Task 2 with a clear thesis statement, two main body paragraphs, and a summary conclusion.
+Speaking: Expand your responses using the PREP framework (Point, Reason, Example, Point).
+
+[SKILL_JOBS]
+=== SKILL JOBS CAREER DEVELOPMENT CORNER ===
+Paragraph 1: In today's digital economy, technical skills must be coupled with adaptive soft skills.
+Paragraph 2: DIU Skill Jobs recommends mastering basic Git, technical writing, and teamwork fundamentals.
+
+[RESEARCH_PAPERS]
+=== DAFFODIL INTERNATIONAL UNIVERSITY RESEARCH PUBLICATIONS ===
+1. 'Bengali Handwritten Character Recognition using Deep CNNs' - Dept. of CSE, DIU.
+2. 'Optimization of Supply Chain in Bangladesh Garment Sector' - Dept. of Textile Eng., DIU.
+
+[ENEWSPAPER]
+=== THE DAILY STAR - FRONT PAGE HEADLINES ===
+DIU Innovation Hub Launches Tech Incubator for Student Startups in Smart Campus.
+National Seminar on Higher Education Highlights Research and AI Integration.
+
+
+

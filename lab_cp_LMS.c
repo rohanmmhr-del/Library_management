@@ -1,7 +1,3 @@
-/*IELTS , skill jobs student ,teacher , diu staffs all can access
-add short header files so that every different code can be identified
-And it can be added to the main code */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,9 +8,14 @@ And it can be added to the main code */
 #define MAX_USERS 50
 #define BORROW_PERIOD_DAYS 7
 
+void clearTerminal() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
 // MD5 ALGORITHM :
-
-
 typedef struct {
     uint32_t state[4];
     uint32_t count[2];
@@ -51,7 +52,6 @@ void MD5Init(MD5_CTX *context) {
     context->state[2] = 0x98badcfe;
     context->state[3] = 0x10325476;
 }
-
 void MD5Update(MD5_CTX *context, const uint8_t *input, unsigned int inputLen) {
     unsigned int i, index, partLen;
     index = (unsigned int)((context->count[0] >> 3) & 0x3F);
@@ -71,7 +71,6 @@ void MD5Update(MD5_CTX *context, const uint8_t *input, unsigned int inputLen) {
     }
     memcpy(&context->buffer[index], &input[i], inputLen - i);
 }
-
 void MD5Final(uint8_t digest[16], MD5_CTX *context) {
     uint8_t bits[8];
     unsigned int index, padLen;
@@ -83,7 +82,6 @@ void MD5Final(uint8_t digest[16], MD5_CTX *context) {
     MD5Encode(digest, context->state, 16);
     memset(context, 0, sizeof(*context));
 }
-
 #define F(x, y, z) (((x) & (y)) | ((~x) & (z)))
 #define G(x, y, z) (((x) & (z)) | ((y) & (~z)))
 #define H(x, y, z) ((x) ^ (y) ^ (z))
@@ -111,7 +109,6 @@ void MD5Final(uint8_t digest[16], MD5_CTX *context) {
  (a) = ROTATE_LEFT ((a), (s)); \
  (a) += (b); \
 }
-
 static void MD5Transform(uint32_t state[4], const uint8_t block[64]) {
     uint32_t a = state[0], b = state[1], c = state[2], d = state[3], x[16];
     MD5Decode(x, block, 64);
@@ -189,9 +186,6 @@ void hashPassword(const char *plainPin, char *outputHex) {
     }
     outputHex[32] = '\0';
 }
-
-
-
 typedef struct {
     int id;
     char title[100];
@@ -223,7 +217,6 @@ int userCount = 0;
 UserProfile *currentUser = NULL;
 int registeredClasses = 0;
 
-
 void initializeFiles();
 void loadUsersFromFile();
 void saveUserToFile(UserProfile u);
@@ -233,7 +226,6 @@ void registerNewUser();
 int loginUser();
 void viewUserProfile();
 void checkNotifications();
-
 
 void elibrary();
 void databaseAZ();
@@ -261,13 +253,9 @@ void servicesMenu();
 void activityCalendar();
 void coreLibraryOperations();
 
-
-
 int main() {
     initializeFiles();
     loadUsersFromFile();
-    
-    displayHeader();
     
     if (userAuthenticationFlow()) {
         mainMenu();
@@ -278,10 +266,9 @@ int main() {
 }
 
 void initializeFiles() {
-    
-    FILE *fp = fopen("content_data.txt", "r");
+    FILE *fp = fopen("content_data2.txt", "r");
     if (!fp) {
-        fp = fopen("content_data.txt", "w");
+        fp = fopen("content_data2.txt", "w");
         if (fp) {
             fprintf(fp, "[IELTS_LESSON]\n");
             fprintf(fp, "=== DIU IELTS PREPARATION MODULE ===\n");
@@ -311,7 +298,7 @@ void initializeFiles() {
 }
 
 void loadUsersFromFile() {
-    FILE *fp = fopen("users.txt", "r");
+    FILE *fp = fopen("users2.txt", "r");
     if (!fp) return;
 
     userCount = 0;
@@ -328,7 +315,7 @@ void loadUsersFromFile() {
 }
 
 void saveUserToFile(UserProfile u) {
-    FILE *fp = fopen("users.txt", "a");
+    FILE *fp = fopen("users2.txt", "a");
     if (fp) {
         fprintf(fp, "%d|%s|%s|%d|%s\n", u.id, u.name, u.department, u.role, u.pinHash);
         fclose(fp);
@@ -341,12 +328,11 @@ void displayHeader() {
     printf("           Established to Foster Education & Research          \n");
     printf("===============================================================\n");
 }
-
-
-
 int userAuthenticationFlow() {
     int choice;
     while (1) {
+        clearTerminal();
+        displayHeader();
         printf("\n1. Login to Existing Account\n");
         printf("2. Register New User Account\n");
         printf("0. Exit System\n");
@@ -364,7 +350,6 @@ int userAuthenticationFlow() {
         }
     }
 }
-
 void registerNewUser() {
     if (userCount >= MAX_USERS) {
         printf("User database limit reached.\n");
@@ -378,14 +363,12 @@ void registerNewUser() {
     printf("Enter User ID (Numbers only): ");
     scanf("%d", &u.id);
 
-    
     for (int i = 0; i < userCount; i++) {
         if (users[i].id == u.id) {
             printf("Error: User ID already registered!\n");
             return;
         }
     }
-
     printf("Enter Full Name: ");
     getchar(); 
     fgets(u.name, sizeof(u.name), stdin);
@@ -402,7 +385,6 @@ void registerNewUser() {
     printf("Create Secret Passcode / PIN: ");
     scanf("%19s", rawPin);
 
-    
     hashPassword(rawPin, u.pinHash);
 
     users[userCount] = u;
@@ -410,8 +392,9 @@ void registerNewUser() {
     saveUserToFile(u);
 
     printf("\n[REGISTRATION SUCCESSFUL]: Profile created securely with MD5 Encryption!\n");
+    printf("\nPress Enter to continue...");
+    getchar(); getchar();
 }
-
 int loginUser() {
     int id;
     char rawPin[20], inputHash[33];
@@ -429,17 +412,22 @@ int loginUser() {
             if (strcmp(users[i].pinHash, inputHash) == 0) {
                 currentUser = &users[i];
                 printf("\n[ACCESS GRANTED]: Welcome back, %s!\n", currentUser->name);
+                printf("\nPress Enter to continue...");
+                getchar(); getchar();
                 return 1;
             } else {
                 printf("\n[AUTHENTICATION FAILED]: Invalid PIN!\n");
+                printf("\nPress Enter to continue...");
+                getchar(); getchar();
                 return 0;
             }
         }
     }
     printf("\n[AUTHENTICATION FAILED]: User ID not found. Please register.\n");
+    printf("\nPress Enter to continue...");
+    getchar(); getchar();
     return 0;
 }
-
 void viewUserProfile() {
     if (!currentUser) return;
 
@@ -469,7 +457,6 @@ void viewUserProfile() {
     checkNotifications();
     printf("===============================================================\n");
 }
-
 void checkNotifications() {
     printf("\n [NOTIFICATION PANEL]:\n");
     int activeNotifs = 0;
@@ -489,14 +476,12 @@ void checkNotifications() {
         printf("  No pending notifications or overdue warnings.\n");
     }
 }
-
-
-
 void mainMenu() {
     int choice;
     char roles[6][40] = {"Guest", "DIU Student", "Teacher", "Staff", "Skill Jobs Participant", "Scholarship Holder"};
 
     while (1) {
+        clearTerminal();
         printf("\n===============================================================\n");
         printf("  DASHBOARD | Logged in as: %s (%s)\n", currentUser->name, roles[currentUser->role]);
         printf("===============================================================\n");
@@ -524,17 +509,30 @@ void mainMenu() {
         printf("Choose action: ");
         scanf("%d", &choice);
 
-        if (choice == 1) viewUserProfile();
+        if (choice == 1) {
+            clearTerminal();
+            viewUserProfile();
+            printf("\nPress Enter to return to main menu...");
+            getchar(); getchar();
+        }
         else if (choice == 2) resourcesMenu();
         else if (choice == 3) servicesMenu();
-        else if (choice == 4) activityCalendar();
+        else if (choice == 4) {
+            clearTerminal();
+            activityCalendar();
+            printf("\nPress Enter to return to main menu...");
+            getchar(); getchar();
+        }
         else if (choice == 5) coreLibraryOperations();
         else if (choice == 6) {
+            clearTerminal();
             if (currentUser->role == 4) skillJobsBooks();
             else if (currentUser->role == 2) researchPapers();
             else if (currentUser->role == 5) ieltsPreparation();
             else if (currentUser->role == 3) calculateOverdueFines();
             else enewspaper();
+            printf("\nPress Enter to return to main menu...");
+            getchar(); getchar();
         } else if (choice == 7) {
             currentUser = NULL;
             if (userAuthenticationFlow()) continue;
@@ -546,10 +544,10 @@ void mainMenu() {
         }
     }
 }
-
 void resourcesMenu() {
     int option;
     while (1) {
+        clearTerminal();
         printf("\n--- DIU RESOURCES PORTAL ---\n");
         printf("1. Access E-Library (Trending Books Online)\n");
         printf("2. Browse Database A-Z\n");
@@ -563,6 +561,7 @@ void resourcesMenu() {
 
         if (option == 7) break;
 
+        clearTerminal();
         switch (option) {
             case 1: elibrary(); break;
             case 2: databaseAZ(); break;
@@ -572,12 +571,14 @@ void resourcesMenu() {
             case 6: remoteAccess(); break;
             default: printf("Invalid option!\n");
         }
+        printf("\nPress Enter to continue...");
+        getchar(); getchar();
     }
 }
-
 void servicesMenu() {
     int option;
     while (1) {
+        clearTerminal();
         printf("\n--- DIU SERVICES PORTAL ---\n");
         printf("1. Item Renew Online\n");
         printf("2. Book Information Literacy Classes\n");
@@ -591,6 +592,7 @@ void servicesMenu() {
 
         if (option == 7) break;
 
+        clearTerminal();
         switch (option) {
             case 1: itemRenew(); break;
             case 2: literacyClasses(); break;
@@ -600,9 +602,10 @@ void servicesMenu() {
             case 6: businessInABox(); break;
             default: printf("Invalid option!\n");
         }
+        printf("\nPress Enter to continue...");
+        getchar(); getchar();
     }
 }
-
 void activityCalendar() {
     printf("\n===============================================================\n");
     printf("                DIU LIBRARY ACTIVITY CALENDAR                  \n");
@@ -615,10 +618,10 @@ void activityCalendar() {
     printf(" [Oct 22] - National Library Day: Special DIU Innovation Hub Event\n");
     printf("===============================================================\n");
 }
-
 void coreLibraryOperations() {
     int option;
     while (1) {
+        clearTerminal();
         printf("\n--- CORE PHYSICAL BOOK TRANSACTIONS ---\n");
         printf("1. Search & View Book Catalog\n");
         printf("2. Borrow / Issue Book\n");
@@ -629,16 +632,17 @@ void coreLibraryOperations() {
 
         if (option == 4) break;
 
+        clearTerminal();
         switch (option) {
             case 1: searchBook(); break;
             case 2: issueBook(); break;
             case 3: returnBook(); break;
             default: printf("Invalid choice!\n");
         }
+        printf("\nPress Enter to continue...");
+        getchar(); getchar();
     }
 }
-
-
 
 void elibrary() {
     printf("\n>>> DIU E-Library Portal <<<\n");
@@ -646,7 +650,6 @@ void elibrary() {
     printf(" - C Programming Essentials (Digital Ed. 2024)\n");
     printf(" - Advanced System Architecture and Cloud Frameworks\n");
 }
-
 void databaseAZ() {
     printf("\n>>> Database A-Z Portal <<<\n");
     printf(" - [1] IEEE Xplore Digital Library\n");
@@ -654,7 +657,6 @@ void databaseAZ() {
     printf(" - [3] Emerald Insight Journals\n");
     printf(" - [4] SpringerLink Journals\n");
 }
-
 void instRepository() {
     printf("\n>>> DIU DSpace Institutional Repository <<<\n");
     printf("Recent Submissions:\n");
@@ -668,7 +670,6 @@ void voiceLibrary() {
     printf(" 1. 'C Programming Audio Class' [Chapter 1-5]\n");
     printf(" 2. 'Business Ethics for Entrepreneurs' [Full Audiobook]\n");
 }
-
 void enewspaper() {
     FILE *fp = fopen("content_data.txt", "r");
     if (!fp) return;
@@ -683,7 +684,6 @@ void enewspaper() {
     }
     fclose(fp);
 }
-
 void remoteAccess() {
     char email[50];
     printf("\n>>> Remote Access Configuration <<<\n");
@@ -695,7 +695,6 @@ void remoteAccess() {
         printf("Error: Access restricted to DIU domain emails!\n");
     }
 }
-
 void itemRenew() {
     int bookId, found = 0;
     printf("\n>>> Item Renew Service <<<\n");
@@ -722,7 +721,6 @@ void itemRenew() {
     }
     if (!found) printf("Error: Book ID %d not found.\n", bookId);
 }
-
 void literacyClasses() {
     int option;
     printf("\n>>> Information Literacy & Research Seminars <<<\n");
@@ -735,14 +733,12 @@ void literacyClasses() {
         printf("Registration successful! Class added to your profile records.\n");
     }
 }
-
 void internshipPortal() {
     printf("\n>>> Internship Portal & DSpace Upload Guidelines <<<\n");
     printf("1. PDF must contain your signature page.\n");
     printf("2. Keep file size under 15MB.\n");
     printf("3. Format naming: ID_Department_Semester.pdf\n");
 }
-
 void refManagement() {
     printf("\n>>> Reference Management Assistant <<<\n");
     printf("Mendeley: Use APA 7th edition as default citation format.\n");
@@ -773,7 +769,6 @@ void searchBook() {
                library[i].issuedToUserId);
     }
 }
-
 void issueBook() {
     int bookId, daysSim, found = 0;
     printf("\nEnter Book ID to Issue: ");
@@ -800,7 +795,6 @@ void issueBook() {
     }
     if (!found) printf("Book ID %d not found.\n", bookId);
 }
-
 void returnBook() {
     int bookId, found = 0;
     printf("\nEnter Book ID to Return: ");
@@ -823,7 +817,6 @@ void returnBook() {
     }
     if (!found) printf("Book ID %d not found.\n", bookId);
 }
-
 void skillJobsBooks() {
     FILE *fp = fopen("content_data.txt", "r");
     if (!fp) return;
@@ -838,7 +831,6 @@ void skillJobsBooks() {
     }
     fclose(fp);
 }
-
 void researchPapers() {
     FILE *fp = fopen("content_data.txt", "r");
     if (!fp) return;
@@ -853,7 +845,6 @@ void researchPapers() {
     }
     fclose(fp);
 }
-
 void ieltsPreparation() {
     FILE *fp = fopen("content_data.txt", "r");
     if (!fp) return;
@@ -868,7 +859,6 @@ void ieltsPreparation() {
     }
     fclose(fp);
 }
-
 void calculateOverdueFines() {
     int targetId, daysOverdue;
     float finePerDay = 10.0, totalFine = 0.0;
